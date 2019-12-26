@@ -8,8 +8,8 @@ class TRON(Board):
         super().__init__(width, height)
         self.direction_first = 'right'
         self.direction_second = 'left'
-        self.posFirst = [12, 0]
-        self.posSecond = [12, 24]
+        self.posFirst = [self.height // 2, 0]
+        self.posSecond = [self.height // 2, self.height - 1]
 
     def next_move(self):
         self.board[self.posFirst[0]][self.posFirst[1]] = 1
@@ -39,6 +39,7 @@ class TRON(Board):
         #    print("Первый Луз")
         # if self.board[self.posSecond[0]][self.posSecond[1]] != 0:
         #    print("Второй Луз")
+
     def change_direction(self, player, direction):
         if player == 1:
             if direction == 'up':
@@ -68,7 +69,7 @@ class TRON(Board):
                     self.cell_size, self.cell_size
                 )
                 if row == self.posFirst[0] and col == self.posFirst[1]:
-                    color = pygame.Color('blue')
+                    color = pygame.Color('dark cyan')
                     pygame.draw.rect(screen, color, rect)
 
                 if row == self.posSecond[0] and col == self.posSecond[1]:
@@ -76,18 +77,13 @@ class TRON(Board):
                     pygame.draw.rect(screen, color, rect)
 
                 if self.board[row][col] == 1:
-                    color = pygame.Color('light blue')
+                    color = pygame.Color('cyan')
                     pygame.draw.rect(screen, color, rect)
 
                 if self.board[row][col] == 2:
                     color = pygame.Color('dark orange')
                     pygame.draw.rect(screen, color, rect)
-
-
-
-
         super().render(screen)
-
 
 
 pygame.init()
