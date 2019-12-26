@@ -37,8 +37,9 @@ class TRON(Board):
         self.posSecond[1] %= 33
         self.posFirst[0] %= 33
         self.posFirst[1] %= 33
-        if self.board[self.posFirst[0]][self.posFirst[1]] != 0 \
-                and self.board[self.posSecond[0]][self.posSecond[1]] != 0:
+        if self.posFirst == self.posSecond or \
+                (self.board[self.posFirst[0]][self.posFirst[1]] != 0
+                 and self.board[self.posSecond[0]][self.posSecond[1]] != 0):
             print("Ничья")
             self.restart()
         if self.board[self.posFirst[0]][self.posFirst[1]] != 0:
