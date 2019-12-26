@@ -10,7 +10,7 @@ class Board:
         # значения по умолчанию
         self.left = 20
         self.top = 20
-        self.cell_size = 10
+        self.cell_size = 20
         self.color = pygame.Color('white')
 
     # настройка внешнего вида
