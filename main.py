@@ -8,8 +8,11 @@ class TRON(Board):
         super().__init__(width, height)
         self.direction_first = 'right'
         self.direction_second = 'left'
-        self.posFirst = [self.height // 2, 0]
-        self.posSecond = [self.height // 2, self.height - 1]
+        self.posFirst = [height // 2, 0]
+        self.posSecond = [height // 2, width - 1]
+
+    def restart(self):
+        self.__init__(self.width, self.height)
 
     def next_move(self):
         self.board[self.posFirst[0]][self.posFirst[1]] = 1
@@ -34,11 +37,16 @@ class TRON(Board):
         self.posSecond[1] %= 33
         self.posFirst[0] %= 33
         self.posFirst[1] %= 33
-        # print(self.board[self.posFirst[0]][self.posFirst[1]])
-        # if self.board[self.posFirst[0]][self.posFirst[1]] != 0:
-        #    print("Первый Луз")
-        # if self.board[self.posSecond[0]][self.posSecond[1]] != 0:
-        #    print("Второй Луз")
+        if self.board[self.posFirst[0]][self.posFirst[1]] != 0 \
+                and self.board[self.posSecond[0]][self.posSecond[1]] != 0:
+            print("Ничья")
+            self.restart()
+        if self.board[self.posFirst[0]][self.posFirst[1]] != 0:
+            print("Первый Луз")
+            self.restart()
+        if self.board[self.posSecond[0]][self.posSecond[1]] != 0:
+            print("Второй Луз")
+            self.restart()
 
     def change_direction(self, player, direction):
         if player == 1:
@@ -93,7 +101,9 @@ screen = pygame.display.set_mode(size)
 board = TRON(w, h)
 running = True
 while running:
+    restart_pressed = False
     for event in pygame.event.get():
+        restart_pressed = False
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
@@ -113,7 +123,11 @@ while running:
                 board.change_direction(2, 'right')
             elif event.key == 276:
                 board.change_direction(2, 'left')
-    board.next_move()
+            elif event.key == 114:
+                restart_pressed = True
+                board.restart()
+    if not restart_pressed:
+        board.next_move()
     screen.fill((0, 0, 0))
     board.render(screen)
     pygame.display.flip()
