@@ -6,7 +6,6 @@ class Board:
         self.width = width
         self.height = height
         self.board = [[0] * width for _ in range(height)]
-        # значения по умолчанию
         self.left = 20
         self.top = 20
         self.cell_size = 20
