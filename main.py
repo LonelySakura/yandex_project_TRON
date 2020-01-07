@@ -1,6 +1,19 @@
 import pygame
 from board import Board
-import time
+import sys
+import os
+
+
+def load_image(name, colorkey=None):
+    fullname = os.path.join('data', name)
+    image = pygame.image.load(fullname).convert()
+    if colorkey is not None:
+        if colorkey == -1:
+            colorkey = image.get_at((0, 0))
+        image.set_colorkey(colorkey)
+    else:
+        image = image.convert_alpha()
+    return image
 
 
 class TRON(Board):
@@ -11,7 +24,12 @@ class TRON(Board):
         self.posFirst = [height // 2, 0]
         self.posSecond = [height // 2, width - 1]
 
-    def restart(self):
+    def win_screen(self, win):
+        pass
+
+    def restart(self, win):
+        self.win_screen(win)
+        start_screen()
         self.__init__(self.width, self.height)
 
     def next_move(self):
@@ -41,19 +59,19 @@ class TRON(Board):
                 (self.board[self.posFirst[0]][self.posFirst[1]] != 0
                  and self.board[self.posSecond[0]][self.posSecond[1]] != 0):
             print("Ничья")
-            self.restart()
+            self.restart(0)
         if self.board[self.posFirst[0]][self.posFirst[1]] != 0:
-            print("Первый Луз")
-            self.restart()
+            print("Первый проиграл")
+            self.restart(2)
         if self.board[self.posSecond[0]][self.posSecond[1]] != 0:
-            print("Второй Луз")
-            self.restart()
+            print("Второй проиграл")
+            self.restart(1)
 
     def change_direction(self, player, direction):
         if player == 1:
-            if direction == 'up' and self.direction_first != 'up':
+            if direction == 'up' and self.direction_first != 'down':
                 self.direction_first = 'up'
-            elif direction == 'down' and self.direction_first != 'down':
+            elif direction == 'down' and self.direction_first != 'up':
                 self.direction_first = 'down'
             elif direction == 'right' and self.direction_first != 'left':
                 self.direction_first = 'right'
@@ -97,10 +115,53 @@ class TRON(Board):
 
 pygame.init()
 w, h = 33, 33
+clock = pygame.time.Clock()
 size = width, height = 40 + w * 20, 40 + h * 20
 screen = pygame.display.set_mode(size)
 board = TRON(w, h)
+FPS_menu = 50
+FPS_game = 5
 running = True
+WIDTH = HEIGHT = h * 20 + 40
+
+
+def terminate():
+    pygame.quit()
+    sys.exit()
+
+
+def start_screen():
+    intro_text = ["*основные правила*", "",
+                  "Управление голубым гонщиком *картинка_нейм*",
+                  "Управление оранжевым гонщиком *картинка_нейм*",
+                  "Нажмите любую кнопку чтобы начать игру"]
+    screen.fill((0, 0, 0))
+    fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    text_coord = 50
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('white'))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                return
+        pygame.display.flip()
+        clock.tick(FPS_menu)
+
+
+start_screen()
+
+
 while running:
     restart_pressed = False
     for event in pygame.event.get():
@@ -132,5 +193,5 @@ while running:
     screen.fill((0, 0, 0))
     board.render(screen)
     pygame.display.flip()
-    time.sleep(0.20)
+    clock.tick(FPS_game)
 pygame.quit()
