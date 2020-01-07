@@ -51,22 +51,22 @@ class TRON(Board):
 
     def change_direction(self, player, direction):
         if player == 1:
-            if direction == 'up':
+            if direction == 'up' and self.direction_first != 'up':
                 self.direction_first = 'up'
-            elif direction == 'down':
+            elif direction == 'down' and self.direction_first != 'down':
                 self.direction_first = 'down'
-            elif direction == 'right':
+            elif direction == 'right' and self.direction_first != 'left':
                 self.direction_first = 'right'
-            elif direction == 'left':
+            elif direction == 'left' and self.direction_first != 'right':
                 self.direction_first = 'left'
         elif player == 2:
-            if direction == 'up':
+            if direction == 'up' and self.direction_second != 'down':
                 self.direction_second = 'up'
-            elif direction == 'down':
+            elif direction == 'down' and self.direction_second != 'up':
                 self.direction_second = 'down'
-            elif direction == 'right':
+            elif direction == 'right' and self.direction_second != 'left':
                 self.direction_second = 'right'
-            elif direction == 'left':
+            elif direction == 'left' and self.direction_second != 'right':
                 self.direction_second = 'left'
 
     def render(self, screen):
