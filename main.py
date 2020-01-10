@@ -22,14 +22,24 @@ class TRON(Board):
         super().__init__(width, height)
         self.direction_first = 'right'
         self.direction_second = 'left'
+        self.blue_image = pygame.transform.scale(load_image('blue.png'), (20, 20))
+        self.red_image = pygame.transform.scale(load_image('red.png'), (20, 20))
+        self.blue_direction_arr = [self.blue_image,
+                                   pygame.transform.rotate(self.blue_image, 180),
+                                   pygame.transform.rotate(self.blue_image, 90),
+                                   pygame.transform.rotate(self.blue_image, 270)]
+        self.red_direction_arr = [self.red_image,
+                                  pygame.transform.rotate(self.red_image, 180),
+                                  pygame.transform.rotate(self.red_image, 90),
+                                  pygame.transform.rotate(self.red_image, 270)]
         self.posFirst = [height // 2, 0]
         self.posSecond = [height // 2, width - 1]
+        self.all_sprites = pygame.sprite.Group()
 
     def win_screen(self, win):
         self.render(screen)
         if win == 2:
             win_text = "Выиграл гонщик с оранжевым цветом"
-            color_arr = [pygame.Color('white'), pygame.Color('dark cyan')]
             winner_color = pygame.Color('orange')
             rect = pygame.Rect(
                 self.left + self.posFirst[1] * self.cell_size,
@@ -38,13 +48,21 @@ class TRON(Board):
                 self.cell_size
             )
             for i in range(5):
-                pygame.draw.rect(screen, color_arr[i % 2], rect)
+                if i % 2 == 0:
+                    pygame.draw.rect(screen, pygame.Color('white'), rect)
+                elif self.direction_first == 'up':
+                    screen.blit(self.blue_direction_arr[0], rect)
+                elif self.direction_first == 'down':
+                    screen.blit(self.blue_direction_arr[1], rect)
+                elif self.direction_first == 'right':
+                    screen.blit(self.blue_direction_arr[3], rect)
+                else:
+                    screen.blit(self.blue_direction_arr[2], rect)
                 pygame.display.flip()
                 time.sleep(1)
         elif win == 1:
             win_text = "Выиграл гонщик с голубым цветом"
             winner_color = pygame.Color('cyan')
-            color_arr = [pygame.Color('white'), pygame.Color('orange')]
             rect = pygame.Rect(
                 self.left + self.posSecond[1] * self.cell_size,
                 self.top + self.posSecond[0] * self.cell_size,
@@ -52,14 +70,21 @@ class TRON(Board):
                 self.cell_size
             )
             for i in range(5):
-                pygame.draw.rect(screen, color_arr[i % 2], rect)
+                if i % 2 == 0:
+                    pygame.draw.rect(screen, pygame.Color('white'), rect)
+                elif self.direction_second == 'up':
+                    screen.blit(self.red_direction_arr[0], rect)
+                elif self.direction_second == 'down':
+                    screen.blit(self.red_direction_arr[1], rect)
+                elif self.direction_second == 'right':
+                    screen.blit(self.red_direction_arr[3], rect)
+                elif self.direction_second == 'left':
+                    screen.blit(self.red_direction_arr[2], rect)
                 pygame.display.flip()
                 time.sleep(1)
         else:
             win_text = "Ничья"
             winner_color = pygame.Color('white')
-            color_arr_second = [pygame.Color('white'), pygame.Color('orange')]
-            color_arr_first = [pygame.Color('white'), pygame.Color('dark cyan')]
             rect_second = pygame.Rect(
                 self.left + self.posSecond[1] * self.cell_size,
                 self.top + self.posSecond[0] * self.cell_size,
@@ -73,8 +98,26 @@ class TRON(Board):
                 self.cell_size
             )
             for i in range(5):
-                pygame.draw.rect(screen, color_arr_second[i % 2], rect_second)
-                pygame.draw.rect(screen, color_arr_first[i % 2], rect_first)
+                if i % 2 == 0:
+                    pygame.draw.rect(screen, pygame.Color('white'), rect_first)
+                elif self.direction_first == 'up':
+                    screen.blit(self.blue_direction_arr[0], rect_first)
+                elif self.direction_first == 'down':
+                    screen.blit(self.blue_direction_arr[1], rect_first)
+                elif self.direction_first == 'right':
+                    screen.blit(self.blue_direction_arr[3], rect_first)
+                else:
+                    screen.blit(self.blue_direction_arr[2], rect_first)
+                if i % 2 == 0:
+                    pygame.draw.rect(screen, pygame.Color('white'), rect_second)
+                elif self.direction_second == 'up':
+                    screen.blit(self.red_direction_arr[0], rect_second)
+                elif self.direction_second == 'down':
+                    screen.blit(self.red_direction_arr[1], rect_second)
+                elif self.direction_second == 'right':
+                    screen.blit(self.red_direction_arr[3], rect_second)
+                else:
+                    screen.blit(self.red_direction_arr[2], rect_second)
                 pygame.display.flip()
                 time.sleep(1)
         screen.fill((0, 0, 0))
@@ -91,12 +134,11 @@ class TRON(Board):
                 elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                     return
             pygame.display.flip()
-            clock.tick(FPS_menu)
 
     def restart(self, win):
         if win != 'restart':
             self.win_screen(win)
-        start_screen()
+            start_screen()
         self.__init__(self.width, self.height)
 
     def next_move(self):
@@ -162,15 +204,28 @@ class TRON(Board):
                 if row == self.posFirst[0] and col == self.posFirst[1]:
                     color = pygame.Color('dark cyan')
                     pygame.draw.rect(screen, color, rect)
-
+                    if self.direction_first == "up":
+                        screen.blit(self.blue_direction_arr[0], rect)
+                    if self.direction_first == "down":
+                        screen.blit(self.blue_direction_arr[1], rect)
+                    if self.direction_first == "left":
+                        screen.blit(self.blue_direction_arr[2], rect)
+                    if self.direction_first == "right":
+                        screen.blit(self.blue_direction_arr[3], rect)
                 if row == self.posSecond[0] and col == self.posSecond[1]:
                     color = pygame.Color('orange')
                     pygame.draw.rect(screen, color, rect)
-
+                    if self.direction_second == "up":
+                        screen.blit(self.red_direction_arr[0], rect)
+                    if self.direction_second == "down":
+                        screen.blit(self.red_direction_arr[1], rect)
+                    if self.direction_second == "left":
+                        screen.blit(self.red_direction_arr[2], rect)
+                    if self.direction_second == "right":
+                        screen.blit(self.red_direction_arr[3], rect)
                 if self.board[row][col] == 1:
                     color = pygame.Color('cyan')
                     pygame.draw.rect(screen, color, rect)
-
                 if self.board[row][col] == 2:
                     color = pygame.Color('dark orange')
                     pygame.draw.rect(screen, color, rect)
@@ -196,8 +251,8 @@ def terminate():
 
 def start_screen():
     intro_text = ["*основные правила*", "",
-                  "Управление голубым гонщиком *картинка_нейм*",
-                  "Управление оранжевым гонщиком *картинка_нейм*",
+                  "Управление голубым гонщиком WASD",
+                  "Управление оранжевым гонщиком Стрелочки",
                   "Нажмите любую кнопку чтобы начать игру"]
     screen.fill((0, 0, 0))
     fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
@@ -253,7 +308,7 @@ while running:
                 board.restart('restart')
     if not restart_pressed:
         board.next_move()
-    screen.fill((0, 0, 0))
+    screen.fill((27, 53, 52))
     board.render(screen)
     pygame.display.flip()
     clock.tick(FPS_game)

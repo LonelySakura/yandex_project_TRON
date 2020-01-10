@@ -9,7 +9,7 @@ class Board:
         self.left = 20
         self.top = 20
         self.cell_size = 20
-        self.color = pygame.Color('white')
+        self.color = pygame.Color(60, 146, 162)
 
     def set_view(self, left, top, cell_size):
         self.left = left
@@ -25,7 +25,7 @@ class Board:
                     self.cell_size,
                     self.cell_size
                 )
-                pygame.draw.rect(screen, self.color, rect, 1)
+                pygame.draw.rect(screen, self.color, rect, 2)
 
     def get_cell(self, mouse_pos):
         col = (mouse_pos[0] - self.left) // self.cell_size
