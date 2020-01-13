@@ -22,8 +22,8 @@ class TRON(Board):
         super().__init__(width, height)
         self.direction_first = 'right'
         self.direction_second = 'left'
-        self.blue_image = pygame.transform.scale(load_image('blue.png'), (20, 20))
-        self.red_image = pygame.transform.scale(load_image('red.png'), (20, 20))
+        self.blue_image = pygame.transform.scale(load_image('blue.jpg', -1), (20, 20))
+        self.red_image = pygame.transform.scale(load_image('red.jpg', -1), (20, 20))
         self.blue_direction_arr = [self.blue_image,
                                    pygame.transform.rotate(self.blue_image, 180),
                                    pygame.transform.rotate(self.blue_image, 90),
@@ -124,15 +124,20 @@ class TRON(Board):
         fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
         screen.blit(fon, (0, 0))
         font = pygame.font.Font(None, 50)
+        font1 = pygame.font.Font(None, 30)
         text = font.render(win_text, 1, winner_color)
-        text_pos = (700 // 2 - text.get_width() // 2, 700 // 2 - text.get_height() // 2 )
+        text1 = font1.render('Нажмите пробел чтобы продолжить', 1, pygame.Color('white'))
+        text_pos = (700 // 2 - text.get_width() // 2, 700 // 2 - text.get_height() // 2)
+        text_pos1 = (700 // 2 - text1.get_width() // 2, 100 + 700 // 2 - text1.get_height() // 2)
         screen.blit(text, text_pos)
+        screen.blit(text1, text_pos1)
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     terminate()
-                elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                    return
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == 32:
+                        return
             pygame.display.flip()
 
     def restart(self, win):
@@ -202,7 +207,7 @@ class TRON(Board):
                     self.cell_size, self.cell_size
                 )
                 if row == self.posFirst[0] and col == self.posFirst[1]:
-                    color = pygame.Color('dark cyan')
+                    color = pygame.Color('cyan')
                     pygame.draw.rect(screen, color, rect)
                     if self.direction_first == "up":
                         screen.blit(self.blue_direction_arr[0], rect)
@@ -227,7 +232,7 @@ class TRON(Board):
                     color = pygame.Color('cyan')
                     pygame.draw.rect(screen, color, rect)
                 if self.board[row][col] == 2:
-                    color = pygame.Color('dark orange')
+                    color = pygame.Color('orange')
                     pygame.draw.rect(screen, color, rect)
         super().render(screen)
 
@@ -250,29 +255,32 @@ def terminate():
 
 
 def start_screen():
-    intro_text = ["*основные правила*", "",
-                  "Управление голубым гонщиком WASD",
-                  "Управление оранжевым гонщиком Стрелочки",
-                  "Нажмите любую кнопку чтобы начать игру"]
+    intro_text = ["Два гонщика движутся с разный сторон экрана.",
+                  "После того как гонщик проезжает 1 клетку,",
+                  "он ставит стену, через которую нельзя проезжать.",
+                  "Кто въедет в стену, тот проиграет.",
+                  "",
+                  "Управление голубым гонщиком - WASD",
+                  "Управление оранжевым гонщиком - 'cтрелочки'",
+                  "",
+                  "Нажмите пробел чтобы начать игру"]
     screen.fill((0, 0, 0))
     fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
-    text_coord = 50
+    i = 7
     for line in intro_text:
         string_rendered = font.render(line, 1, pygame.Color('white'))
-        intro_rect = string_rendered.get_rect()
-        text_coord += 10
-        intro_rect.top = text_coord
-        intro_rect.x = 10
-        text_coord += intro_rect.height
-        screen.blit(string_rendered, intro_rect)
+        text_pos = [700 // 2 - string_rendered.get_width() // 2, i * 30]
+        i += 1
+        screen.blit(string_rendered, text_pos)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                return
+            elif event.type == pygame.KEYDOWN:
+                if event.key == 32:
+                    return
         pygame.display.flip()
         clock.tick(FPS_menu)
 
